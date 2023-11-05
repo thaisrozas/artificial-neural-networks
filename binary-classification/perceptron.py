@@ -36,17 +36,17 @@ def perceptron_pseudocode(X, Y, learning_rate):
 data = np.loadtxt("binary-classification/Data.csv", delimiter=',')
 
 # Split data into features and labels
-X = data[:, :-1]
-Y = data[:, -1]
+#X = data[:, :-1]
+#Y = data[:, -1]
 
-#inicio = 1
-#fim = 3360
+inicio = 800
+fim = 2200
 
 # Extrair as linhas entre 'inicio' e 'fim' e as colunas desejadas
-#subset = data[inicio:fim, :]
-#X = subset[:, :2]  # Duas primeiras colunas
-#Y = subset[:, 2]   # Terceira coluna
-#N = X.shape[0]
+subset = data[inicio:fim, :]
+X = subset[:, :2]  # Duas primeiras colunas
+Y = subset[:, 2]   # Terceira coluna
+N = X.shape[0]
 
 # Set a learning rate
 learning_rate = 0.01
@@ -64,7 +64,7 @@ specificities = []
 confusion_matrices = []
 
 # Realize o processo de treinamento e teste em 100 rodadas
-R = 100
+R = 5
 
 for r in range(R):
 
@@ -101,7 +101,7 @@ for r in range(R):
     plt.ylabel('Feature 2')
     plt.legend()
     plt.title('Perceptron Decision Boundary')
-    #plt.show()
+    plt.show()
 
     # Testar o Perceptron no conjunto de teste
     correct_predictions = 0

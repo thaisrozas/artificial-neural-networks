@@ -2,42 +2,45 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
+
 def sign(u):
     return 1 if u >= 0 else -1
+
 
 def perceptron_pseudocode(X, Y, learning_rate):
     # Add a bias term to the input data
     X = np.c_[np.ones(X.shape[0]), X]
-    
+
     # Initialize weights with zeros or random small values
     w = np.zeros(X.shape[1])
-    
+
     error_exists = True
     t = 0
-    
+
     while error_exists:
         error_exists = False
-        
+
         for i in range(X.shape[0]):
             u_t = np.dot(w, X[i])
             y_t = sign(u_t)
             w_new = w + learning_rate * (Y[i] - y_t) * X[i]
-            
-            if (Y[i] != y_t):
+
+            if Y[i] != y_t:
                 error_exists = True
-                
+
             w = w_new
 
         t += 1
 
     return w
 
+
 # Load data from an external CSV file
-data = np.loadtxt("binary-classification/Data.csv", delimiter=',')
+data = np.loadtxt("binary-classification/Data.csv", delimiter=",")
 
 # Split data into features and labels
-#X = data[:, :-1]
-#Y = data[:, -1]
+# X = data[:, :-1]
+# Y = data[:, -1]
 
 inicio = 800
 fim = 2200
@@ -45,17 +48,17 @@ fim = 2200
 # Extrair as linhas entre 'inicio' e 'fim' e as colunas desejadas
 subset = data[inicio:fim, :]
 X = subset[:, :2]  # Duas primeiras colunas
-Y = subset[:, 2]   # Terceira coluna
+Y = subset[:, 2]  # Terceira coluna
 N = X.shape[0]
 
 # Set a learning rate
 learning_rate = 0.01
 
 # Train the perceptron
-#final_weights = perceptron_pseudocode(X, Y, learning_rate)
+# final_weights = perceptron_pseudocode(X, Y, learning_rate)
 
 
-#TREINAMENTO E TESTE DO PERCEPTRON EM RODADAS
+# TREINAMENTO E TESTE DO PERCEPTRON EM RODADAS
 
 # Inicialize as variáveis para armazenar resultados
 accuracies = []
@@ -67,40 +70,47 @@ confusion_matrices = []
 R = 5
 
 for r in range(R):
-
     # EMBARALHAR AS AMOSTRAS
 
     s = np.random.permutation(N)
 
-    X_random = X[s,:]
+    X_random = X[s, :]
     y_random = Y[s]
 
-    #DIVIDIR TESTE E TREINO (EM X E Y) NA PROPORÇÃO 80-20
+    # DIVIDIR TESTE E TREINO (EM X E Y) NA PROPORÇÃO 80-20
 
-    X_treino = X_random[0:int(N*.8),:]  
-    y_treino = y_random[0:int(N*.8)]  
+    X_treino = X_random[0 : int(N * 0.8), :]
+    y_treino = y_random[0 : int(N * 0.8)]
 
-    X_teste = X_random[int(N*.8):,:]
-    y_teste = y_random[int(N*.8):]
+    X_teste = X_random[int(N * 0.8) :, :]
+    y_teste = y_random[int(N * 0.8) :]
 
     trained_weights = perceptron_pseudocode(X_treino, y_treino, learning_rate)
 
     # Create a scatter plot of the data points
-    plt.scatter(X[Y == 1][:, 0], X[Y == 1][:, 1], color='green', edgecolors='k', label='Class 1')
-    plt.scatter(X[Y == -1][:, 0], X[Y == -1][:, 1], color='blue', edgecolors='k', label='Class -1')
+    plt.scatter(
+        X[Y == 1][:, 0], X[Y == 1][:, 1], color="green", edgecolors="k", label="Class 1"
+    )
+    plt.scatter(
+        X[Y == -1][:, 0],
+        X[Y == -1][:, 1],
+        color="blue",
+        edgecolors="k",
+        label="Class -1",
+    )
 
     # Plot the decision boundary
     x1 = np.linspace(X[:, 0].min() - 1, X[:, 0].max() + 1, 100)
     x2 = (-trained_weights[0] - trained_weights[1] * x1) / trained_weights[2]
-    plt.plot(x1, x2, color='red', linestyle='--', label='Decision Boundary')
+    plt.plot(x1, x2, color="red", linestyle="--", label="Decision Boundary")
 
     plt.xlim(X[:, 0].min() - 1, X[:, 0].max() + 1)
     plt.ylim(X[:, 1].min() - 1, X[:, 1].max() + 1)
 
-    plt.xlabel('Feature 1')
-    plt.ylabel('Feature 2')
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
     plt.legend()
-    plt.title('Perceptron Decision Boundary')
+    plt.title("Perceptron Decision Boundary")
     plt.show()
 
     # Testar o Perceptron no conjunto de teste
@@ -137,7 +147,9 @@ for r in range(R):
     specificities.append(specificity)
 
     # Matriz de Confusão
-    confusion_matrix_data = np.array([[true_negatives, false_positives], [false_negatives, true_positives]])
+    confusion_matrix_data = np.array(
+        [[true_negatives, false_positives], [false_negatives, true_positives]]
+    )
     confusion_matrices.append(confusion_matrix_data)
 
 # (a) Acurácia Média, com desvio padrão, maior e menor valor
@@ -176,8 +188,4 @@ worst_accuracy_round = accuracies.index(min_accuracy)
 worst_confusion_matrix = confusion_matrices[worst_accuracy_round]
 
 print("(e) Matriz de Confusão para a Pior Acurácia:")
-print(worst_confusion_matrix)  
-
-
-
-
+print(worst_confusion_matrix)
